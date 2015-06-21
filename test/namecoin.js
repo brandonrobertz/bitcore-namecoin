@@ -140,55 +140,72 @@ describe('Namecoin', function() {
       raw: new Buffer('524cc8303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303014229b995a76a5efa7e4d01766ba8e1fc960ab14e704303030306d6d76a9142ad843fc5cb10ffb09fd593fe2d9089f5cb5fbf588ac', 'hex'),
     }];
 
-    var checkScriptConversion = function( script) {
+    var checkScriptStringConversion = function( script) {
       // ASM -> bitcore Script object -> buffer should equal original buffer
       var scriptStr = new Script.fromString( script.string);
-      var match1 = bufferTools.equals( scriptStr.toBuffer(), script.raw);
+      var converted = bufferTools.bufferToHex(scriptStr.toBuffer());
+      var original = bufferTools.bufferToHex(script.raw);
+      var match = (converted === original);
+      return match;
+    };
+
+    var checkScriptBufferConversion = function( script) {
       // HEX -> bitcore Script object -> buffer should equal original buffer
       var scriptBuf = new Script.fromBuffer( script.raw);
-      var match2 = bufferTools.equals( scriptBuf.toBuffer(), script.raw);
-      var matches = {
-        fromStrBufferMatch: match1,
-        fromHexBufferMatch: match2
-      };
-      return matches;
+      var converted = bufferTools.bufferToHex(scriptBuf.toBuffer());
+      var original = bufferTools.bufferToHex(script.raw);
+      var match = (converted === original);
+      return match;
     };
 
     it('should be able to parse name new from string', function(){
-      var matches1 = checkScriptConversion( testScripts[0]);
-      var matches2 = checkScriptConversion( testScripts[1]);
-      expect(matches1.fromStrBufferMatch).to.be.true;
-      expect(matches2.fromStrBufferMatch).to.be.true;
+      var match1 = checkScriptStringConversion( testScripts[0]);
+      var match2 = checkScriptStringConversion( testScripts[1]);
+      expect(match1).to.be.true;
+      expect(match2).to.be.true;
     });
 
     it('should be able to parse name new from hex', function(){
-      var matches1 = checkScriptConversion( testScripts[0]);
-      var matches2 = checkScriptConversion( testScripts[1]);
-      expect(matches1.fromHexBufferMatch).to.be.true;
-      expect(matches2.fromHexBufferMatch).to.be.true;
+      var match1 = checkScriptBufferConversion( testScripts[0]);
+      var match2 = checkScriptBufferConversion( testScripts[1]);
+      expect(match1).to.be.true;
+      expect(match2).to.be.true;
     });
 
-    // it('should be able to parse name first update from string', function(){
-    //   var matches1 = checkScriptConversion( testScripts[2]);
-    //   expect(matches1.fromStrBufferMatch).to.equal(true);
-    // });
+    it('should be able to parse name first update from string', function(){
+      var match = checkScriptStringConversion( testScripts[2]);
+      expect(match).to.be.true;
+    });
 
-    // it('should be able to parse name first update from hex', function(){
-    //   var matches1 = checkScriptConversion( testScripts[2]);
-    //   expect(matches1.fromHexBufferMatch).to.equal(true);
-    // });
+    it('should be able to parse name first update from hex', function(){
+      var match = checkScriptBufferConversion( testScripts[2]);
+      expect(match).to.be.true;
+    });
 
-    // it('should be able to parse generic name update', function(){
-    //   checkScriptConversion( testScripts[3]);
-    // });
+    it('should be able to parse name update from string', function(){
+      var match = checkScriptStringConversion( testScripts[3]);
+      expect(match).to.be.true;
+    });
 
-    // it('should be able to parse name_firstupdate with long value', function(){
-    //   checkScriptConversion( testScripts[4]);
-    // });
+    it('should be able to parse name_firstupdate with long value from string', function(){
+      var match = checkScriptStringConversion( testScripts[4]);
+      expect(match).to.be.true;
+    });
 
-    // it('should be able to parse name_firstupdate with long name', function(){
-    //   checkScriptConversion( testScripts[5]);
-    // });
+    it('should be able to parse name_firstupdate with long value from buffer', function(){
+      var match = checkScriptBufferConversion( testScripts[4]);
+      expect(match).to.be.true;
+    });
+
+    it('should be able to parse firstupdate w/ long name from string', function(){
+      var match = checkScriptStringConversion( testScripts[5]);
+      expect(match).to.be.true;
+    });
+
+    it('should be able to parse firstupdate w/ long name from buffer', function(){
+      var match = checkScriptBufferConversion( testScripts[5]);
+      expect(match).to.be.true;
+    });
 
   });
 });
