@@ -24,16 +24,17 @@ describe('Namecoin', function() {
   describe('setup', function(){
     it('should overload bitcore on require', function(){
       expect(bitcore.Opcode.OP_NAME_NEW).to.not.exist();
-      bitcoreNamecoin = require('../');
+      // it just returns bitcore
+      bitcoreNamecoin = require('../index');
       expect(bitcore.Opcode.OP_NAME_NEW).to.exist();
     });
 
-    it('should return new instance implicitly', function(){
-      var n1 = bitcoreNamecoin();
-      n1.lol = 1;
-      var n2 = bitcoreNamecoin();
-      expect(n1.lol).to.exist();
-      expect(n2.lol).to.not.exist();
+    it('should return instantiated bitcore instance', function(){
+      var bitcore2 = require('../index');
+      expect(bitcore2.Opcode).to.exist();
+      expect(bitcore2.Opcode.OP_NAME_FIRSTUPDATE).to.exist();
+      expect(bitcore2.Transaction).to.exist();
+      expect(new bitcore2.Transaction().nameNew).to.exist();
     });
 
     it('should have setup namecoin network', function(){
@@ -75,7 +76,7 @@ describe('Namecoin', function() {
       var nameNewScript = '1 1baa8c92fae059f5bcd69566c6c25771fa392133 ' +
         'OP_2DROP OP_DUP OP_HASH160 422040870cb08ff6afe48220042bf0b370' +
         '274f75 OP_EQUALVERIFY OP_CHECKSIG';
-      var s = Script.fromString( nameNewScript);
+      var s = new Script.fromString( nameNewScript);
       expect(s).to.exist();
     });
 
@@ -86,7 +87,7 @@ describe('Namecoin', function() {
         'e3233322e35312e3936222c22777777223a223231322e3233322e35312e3936' +
         '227d7d OP_2DROP OP_2DROP OP_DUP OP_HASH160 bc75e0ff697fa018ab75' +
         'ab93ddaa6b8cbe3d8277 OP_EQUALVERIFY OP_CHECKSIG';
-      var s = Script.fromString( nameFirstUpdateScript);
+      var s = new Script.fromString( nameFirstUpdateScript);
       expect(s).to.exist();
     });
 
@@ -102,7 +103,6 @@ describe('Namecoin', function() {
   });
 
   describe('raw name scripts', function(){
-
     /**
      * Test raw format
      */
@@ -220,6 +220,6 @@ describe('Namecoin', function() {
       var match = checkScriptBufferConversion( testScripts[5]);
       expect(match).to.be.true;
     });
-
   });
+
 });
