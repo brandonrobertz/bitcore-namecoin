@@ -1,0 +1,30 @@
+{
+  "name": "bitcore-namecoin",
+  "main": "./bitcore-namecoin.min.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/brandonrobertz/bitcore-namecoin",
+  "authors": [
+    "Brandon Robertz"
+  ],
+  "description": "Namecoin Support Module for Bitcore",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "namecoin",
+    "bitcore",
+    "nmc",
+    "name_new",
+    "name_firstupdate",
+    "name_update",
+    "transaction"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
