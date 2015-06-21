@@ -22,11 +22,18 @@ describe('Namecoin', function() {
   var nmcNet;
 
   describe('setup', function(){
-
     it('should overload bitcore on require', function(){
       expect(bitcore.Opcode.OP_NAME_NEW).to.not.exist();
       bitcoreNamecoin = require('../');
       expect(bitcore.Opcode.OP_NAME_NEW).to.exist();
+    });
+
+    it('should return new instance implicitly', function(){
+      var n1 = bitcoreNamecoin();
+      n1.lol = 1;
+      var n2 = bitcoreNamecoin();
+      expect(n1.lol).to.exist();
+      expect(n2.lol).to.not.exist();
     });
 
     it('should have setup namecoin network', function(){
