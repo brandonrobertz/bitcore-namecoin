@@ -4,7 +4,7 @@ var expect = chai.expect;
 var should = chai.should();
 
 var bitcore = require('bitcore');
-var bitcoreNamecoin = require('../');
+var bitcoreNamecoin;
 var PrivateKey = bitcore.PrivateKey;
 var Opcode = bitcore.Opcode;
 var Networks = bitcore.Networks;
@@ -22,6 +22,13 @@ describe('Namecoin', function() {
   var nmcNet;
 
   describe('setup', function(){
+
+    it('should overload bitcore on require', function(){
+      expect(bitcore.Opcode.OP_NAME_NEW).to.not.exist();
+      bitcoreNamecoin = require('../');
+      expect(bitcore.Opcode.OP_NAME_NEW).to.exist();
+    });
+
     it('should have setup namecoin network', function(){
       nmcNet = new Networks.get('namecoin');
       expect( nmcNet).to.exist();
