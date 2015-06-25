@@ -1,4 +1,4 @@
-# Namecore Support Module for Bitcore
+# Namecoin Support Module for Bitcore
 
 [![NPM Package](https://img.shields.io/npm/v/bitcore-namecoin.svg?style=flat-square)](https://www.npmjs.org/package/bitcore-namecoin)
 [![Build Status](https://img.shields.io/travis/brandonrobertz/bitcore-namecoin.svg?branch=master&style=flat-square)](https://travis-ci.org/brandonrobertz/bitcore-namecoin)
