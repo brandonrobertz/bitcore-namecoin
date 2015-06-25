@@ -6,6 +6,8 @@
 
 `bitcore-namecoin` adds namecoin support to bitcore for creating namecoin `name_*` transactions, private keys, and scripts in [Node.js](http://nodejs.org/) and web browsers.
 
+Note: This is still experimental software. This module is not intended for use in production environments, or for use where real money is at stake, at this point.
+
 See [the main bitcore repo](https://github.com/bitpay/bitcore) for more information.
 
 ## Getting Started
