@@ -118,7 +118,7 @@ var patchFromNonP2SH = (function(){
 })();
 
 Transaction.prototype._fromNonP2SH = NameInput.patchFromNonP2SH; //patchFromNonP2SH;
-bitcore.Transaction.Input.NameInput = require('./lib/nameinput.js');
+Transaction.Input.NameInput = require('./lib/nameinput.js');
 
 // Add name_* functionality with chaining to Transaction
 Transaction.prototype.nameNew = names.nameNew;

@@ -284,6 +284,35 @@ describe('Namecoin', function() {
     });
   });
 
+  describe('error handling', function(){
+    describe('name_new', function(){
+      it('should throw error when no rand value supplied', function(){
+        expect(function(){
+          new bitcore.Transaction().nameNew( 'NAME', undefined, 'fakeaddress');
+        }).to.throw('No random value supplied.');
+      });
+
+      it('should not throw error when non-hex rand is supplied', function(){
+        // This test checks to see if the underlying namecoin-transaction
+        // library will throw error on supplying non-hex to the nameNew
+        // function. Ordinarilly, if you supplied a non-hex string to
+        // namecoin-transaction it would blow up trying to conver from
+        // hex -> binary. If our function did not convert the string rand
+        // to hex, then an error would be thrown.
+        expect(function(){
+          new bitcore.Transaction().nameNew( 'NAME', 'xxx', address);
+        }).to.not.throw();
+      });
+    });
+    describe('name_firstupdate', function(){
+      it('should throw error on no rand value supplied', function(){
+        expect(function(){
+          new bitcore.Transaction().nameFirstUpdate('NAME',null,'VALUE',address);
+        }).to.throw('No random value supplied.');
+      });
+    });
+  });
+
   describe('transactions', function(){
     describe('name_new namecoin compliance', function(){
       var reference = [{
