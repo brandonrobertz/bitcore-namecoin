@@ -35,20 +35,37 @@ To create a `name_new` transaction:
 
 ```javascript
 var bitcore = require('bitcore-namecoin');
-var txNameNew = new bitcore.Transaction()
+var tx = new bitcore.Transaction()
   .from(utxo)
   .nameNew('d/name', 'randomvalue', 'mzGfeiJFdQyiuQnhB45aeBYefzHJSsiSfj')
   .change('mpe83RGRVWibHrdgfmkJwTxgufNs9quaZC')
-  .fee(0.005) // Standard Namecoin network fee
+  .fee(0.005)
   .sign(privKeySet); // utxo and nameNew output addrs need to have privKeys here
 // now we can broadcast out to the network
-var serialized = txNameNew.serialize();
+var serialized = tx.serialize();
 ```
+
 To create a `name_firstupdate` transaction:
 
+```javascript
+var tx = new bitcore.Transaction()
+  .from([utxo, nameNewUtxo])
+  .nameFirstUpdate(ref.name, ref.rand, ref.value, updateAddr)
+  .change('mpe83RGRVWibHrdgfmkJwTxgufNs9quaZC')
+  .fee(constants.NETWORK_FEE.satoshis)
+  .sign([privKeys[inputAddr], privKeys[nameNewAddr]]);
+var serialized = tx.serialize();
+```
 To create a `name_update` transaction:
 
 ```javascript
+var tx =  new bitcore.Transaction()
+  .from(utxos)
+  .nameUpdate('AAAAAAAAAA', 'CCCCCCCCCC', 'mkGdewyuvU13uHzpMUZe2t8ii4LKgKC8mE')
+  .change('mkVNqbVqcYxi3zB2fRfiRQonf4JjwdAvnE')
+  .fee(constants.NETWORK_FEE.satoshis)
+  .sign([privKeys[outputAddr],privKeys[nameFirstUpdate]]);
+var serialized = tx.serialize();
 ```
 
 ## Details
@@ -56,11 +73,13 @@ To create a `name_update` transaction:
 `bitcore-namecoin` works by pulling in bitcore and then adding Namecoin-specific
 version constants, name operation functions onto `Transaction`, and patches
 a few bitcore functions that do not allow for altcoin compatability (specifically
-`bitcore.Script.fromString` and `bitcore.PrivateKey`).
+`bitcore.Script.fromString` and `Transaction.prototype._fromNonP2SH`). These will
+hopefully by replaced by native Bitcore functions as I work to improve Bitcore's
+altcoin compatability.
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/bitpay/bitcore/blob/master/CONTRIBUTING.md) on the main bitcore repo for information about how to contribute.
+Contributions are welcome! See [CONTRIBUTING.md](https://github.com/bitpay/bitcore/blob/master/CONTRIBUTING.md) on the main bitcore repo for information about how to contribute.
 
 ## License
 
