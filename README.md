@@ -1,5 +1,9 @@
 # Namecore Support Module for Bitcore
 
+[![NPM Package](https://img.shields.io/npm/v/bitcore.svg?style=flat-square)](https://www.npmjs.org/package/bitcore-namecoin)
+[![Build Status](https://img.shields.io/travis/bitpay/bitcore.svg?branch=master&style=flat-square)](https://travis-ci.org/brandonrobertz/bitcore-namecoin)
+[![Coverage Status](https://img.shields.io/coveralls/bitpay/bitcore.svg?style=flat-square)](https://coveralls.io/r/brandonrobertz/bitcore-namecoin)
+
 `bitcore-namecoin` adds namecoin support to bitcore for creating namecoin `name_*` transactions, private keys, and scripts in [Node.js](http://nodejs.org/) and web browsers.
 
 See [the main bitcore repo](https://github.com/bitpay/bitcore) for more information.
