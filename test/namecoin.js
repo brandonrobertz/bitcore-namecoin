@@ -282,16 +282,25 @@ describe('Namecoin', function() {
       var match = checkScriptBufferConversion( testScripts[5]);
       expect(match).to.be.true;
     });
+
   });
 
   describe('error handling', function(){
-    describe('name_new', function(){
-      it('should throw error when no rand value supplied', function(){
-        expect(function(){
-          new bitcore.Transaction().nameNew( 'NAME', undefined, 'fakeaddress');
-        }).to.throw('No random value supplied.');
-      });
+    var longName, longValue, name, value, rand;
 
+    before(function(){
+      longName = new Buffer(constants.NAME_MAX_LENGTH + 1);
+      longValue = new Buffer(constants.VALUE_MAX_LENGTH + 1);
+      longName.fill('N');
+      longValue.fill('V');
+      longName = bufferTools.bufferToHex(longName);
+      longValue = bufferTools.bufferToHex(longValue);
+      name = 'NNNNNNNNNN';
+      value = 'VVVVVVVVVV';
+      rand = '0000000000';
+    });
+
+    describe('name_new', function(){
       it('should not throw error when non-hex rand is supplied', function(){
         // This test checks to see if the underlying namecoin-transaction
         // library will throw error on supplying non-hex to the nameNew
@@ -300,17 +309,58 @@ describe('Namecoin', function() {
         // hex -> binary. If our function did not convert the string rand
         // to hex, then an error would be thrown.
         expect(function(){
-          new bitcore.Transaction().nameNew( 'NAME', 'xxx', address);
+          new bitcore.Transaction().nameNew(name, rand, address);
         }).to.not.throw();
       });
+
+      it('should throw error on no rand value supplied', function(){
+        expect(function(){
+          new bitcore.Transaction().nameNew(name, null, address);
+        }).to.throw('Missing args.');
+      });
+
+      it('should throw error on name too long', function(){
+        expect(function(){
+          new bitcore.Transaction().nameNew(longName, rand, address);
+        }).to.throw('Name too long.');
+      });
+
     });
+
     describe('name_firstupdate', function(){
       it('should throw error on no rand value supplied', function(){
         expect(function(){
-          new bitcore.Transaction().nameFirstUpdate('NAME',null,'VALUE',address);
-        }).to.throw('No random value supplied.');
+          new bitcore.Transaction().nameFirstUpdate(name, null, value, address);
+        }).to.throw('Missing args.');
+      });
+
+      it('should throw error on value too long', function(){
+        expect(function(){
+          new bitcore.Transaction().nameFirstUpdate(name, rand, longValue, address);
+        }).to.throw('Value too long.');
+      });
+
+      it('should throw error on name too long', function(){
+        expect(function(){
+          new bitcore.Transaction().nameFirstUpdate(longName, rand, value, address);
+        }).to.throw('Name too long.');
       });
     });
+
+    describe('name_update', function(){
+      it('should throw error on value too long', function(){
+        expect(function(){
+          new bitcore.Transaction().nameUpdate(name, longValue, address);
+        }).to.throw('Value too long.');
+      });
+
+      it('should throw error on name too long', function(){
+        expect(function(){
+          new bitcore.Transaction().nameUpdate(longName, value, address);
+        }).to.throw('Name too long.');
+      });
+    });
+
   });
 
   describe('transactions', function(){
