@@ -1,4 +1,5 @@
 var bitcore = require('bitcore');
+var $ = bitcore.util.preconditions;
 var Opcode = bitcore.Opcode;
 var Networks = bitcore.Networks;
 var Transaction = bitcore.Transaction;
@@ -6,6 +7,7 @@ var Script = bitcore.Script;
 var script = require('./lib/script');
 var names = require('./lib/names');
 var constants = require('./lib/constants');
+var NameInput = require('./lib/nameinput');
 
 /**
  * Set up bitcore specific constants, version numbers,
@@ -59,6 +61,64 @@ var networkNamecoin = Networks.add({
 // namecoin scripts or passes control to the original
 // bitcore implementation if no name script it detected.
 Script.fromString = script.fromStringNmc;
+
+Script.prototype.isNameOut = function() {
+  return this.isNameNew() || this.isNameFirstUpdate() || this.isNameUpdate();
+};
+
+Script.prototype.getPublicKeyHashName = function() {
+  $.checkState(this.isNameNew() ||
+               this.isNameFirstUpdate() ||
+               this.isNameUpdate(), 'Non-Namecoin script output');
+  // TODO: sanity check on pubKey hash length / type
+  // otherwise the errors moving forward are cryptic
+  switch(this.chunks[0].opcodenum) {
+  case Opcode.OP_NAME_NEW:
+    return this.chunks[5].buf;
+  case Opcode.OP_NAME_FIRSTUPDATE:
+    return this.chunks[8].buf;
+  case Opcode.OP_NAME_UPDATE:
+    return this.chunks[7].buf;
+  default:
+    throw new Error('Non-Namecoin script output');
+  }
+};
+
+Script.prototype.isNameNew = function() {
+  return this.chunks[0].opcodenum === Opcode.OP_NAME_NEW;
+};
+
+Script.prototype.isNameFirstUpdate = function() {
+  return this.chunks[0].opcodenum === Opcode.OP_NAME_FIRSTUPDATE;
+};
+
+Script.prototype.isNameUpdate = function() {
+  return this.chunks[0].opcodenum === Opcode.OP_NAME_UPDATE;
+};
+
+var patchFromNonP2SH = (function(){
+  var originalFn = Transaction.prototype._fromNonP2SH;
+  return function(utxo) {
+
+    if (utxo.script.isNameOut()) {
+      var clazz = NameInput;
+      return this.addInput(new clazz({
+        output: new Output({
+          script: utxo.script,
+          satoshis: utxo.satoshis
+        }),
+        prevTxId: utxo.txId,
+        outputIndex: utxo.outputIndex,
+        script: Script.empty()
+      }));
+    } else {
+      return originalFn(utxo);
+    }
+  };
+})();
+
+Transaction.prototype._fromNonP2SH = NameInput.patchFromNonP2SH; //patchFromNonP2SH;
+bitcore.Transaction.Input.NameInput = require('./lib/nameinput.js');
 
 // Add name_* functionality with chaining to Transaction
 Transaction.prototype.nameNew = names.nameNew;

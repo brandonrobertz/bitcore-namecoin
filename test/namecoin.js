@@ -13,6 +13,7 @@ var Script = bitcore.Script;
 
 var bufferTools = bitcore.util.buffer;
 var constants = require('../lib/constants');
+var NameInput = require('../lib/nameinput');
 chai.config.includeStack = true;
 
 describe('Namecoin', function() {
@@ -51,6 +52,14 @@ describe('Namecoin', function() {
       expect( Opcode.OP_NAME_NEW).to.equal(81);
       expect( Opcode.OP_NAME_FIRSTUPDATE).to.equal(82);
       expect( Opcode.OP_NAME_UPDATE).to.equal(83);
+    });
+
+    it('should add a name script constructor to Input', function(){
+      expect(bitcore.Transaction.Input.NameInput).to.exist();
+    });
+
+    it('should patch Transaction._fromNonP2SH', function(){
+      expect(bitcore.Transaction.prototype._fromNonP2SH).to.equal(NameInput.patchFromNonP2SH);
     });
   });
 
