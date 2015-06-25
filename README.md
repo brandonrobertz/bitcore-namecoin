@@ -44,7 +44,7 @@ To create a `name_firstupdate` transaction:
 ```javascript
 var tx = new bitcore.Transaction()
   .from([utxo, nameNewUtxo])
-  .nameFirstUpdate(ref.name, ref.rand, ref.value, updateAddr)
+  .nameFirstUpdate('d/name', '092abbca8a938103abcc', 'VALUE', 'mzGfeiJFdQyiuQnhB45aeBYefzHJSsiSfj')
   .change('mpe83RGRVWibHrdgfmkJwTxgufNs9quaZC')
   .fee(constants.NETWORK_FEE.satoshis)
   .sign([privKeys[inputAddr], privKeys[nameNewAddr]]);
