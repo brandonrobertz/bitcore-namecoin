@@ -45,6 +45,7 @@ var txNameNew = new bitcore.Transaction()
 var serialized = txNameNew.serialize();
 ```
 To create a `name_firstupdate` transaction:
+
 To create a `name_update` transaction:
 
 ```javascript

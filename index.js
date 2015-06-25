@@ -32,7 +32,7 @@ Opcode.OP_NAME_UPDATE = constants.NAME_UPDATE_OPCODE;
 // Namecoin:
 // Version Bytes:
 // https://en.bitcoin.it/wiki/Base58Check_encoding
-Networks.add({
+var networkNamecoin = Networks.add({
   name: 'namecoin',
   alias: 'namecoin',
   // https://github.com/namecoin/namecore/commit/4b33389f2ed7809404b1a96ae358e148a765ab6f
@@ -52,13 +52,17 @@ Networks.add({
   ]
 });
 
+// networkNamecoin.namecoin = networkNamecoin;
+
 // overload bitcore-s namecoin-rejecting script
 // serializing function with one that first handles
 // namecoin scripts or passes control to the original
 // bitcore implementation if no name script it detected.
 Script.fromString = script.fromStringNmc;
 
-// Add nameNew functionality with chaining to Transaction
+// Add name_* functionality with chaining to Transaction
 Transaction.prototype.nameNew = names.nameNew;
+Transaction.prototype.nameFirstUpdate = names.nameFirstUpdate;
+Transaction.prototype.nameUpdate = names.nameUpdate;
 
 module.exports = bitcore;

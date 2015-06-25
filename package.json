@@ -27,6 +27,7 @@
     "binstring": "^0.2.1",
     "bitcore": "^0.12.7",
     "crypto-hashing": "^0.3.1",
+    "lodash": "^3.9.3",
     "namecoin-transaction": "^0.0.1"
   },
   "devDependencies": {
