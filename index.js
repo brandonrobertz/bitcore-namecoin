@@ -48,9 +48,10 @@ var networkNamecoin = Networks.add({
   networkMagic: 0xf9beb4fe,
   port: 8334,
   dnsSeeds: [
-    'bitseed.xf2.org',
-    'bitseed.bitcoin.org.uk',
-    'dnsseed.bluematt.me',
+    'nmc.seed.quisquis.de',
+    'namecoindnsseed.digi-masters.com',
+    'namecoindnsseed.digi-masters.uk',
+    'dnsseed.namecoin.webbtc.com'
   ]
 });
 
