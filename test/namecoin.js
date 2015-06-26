@@ -72,6 +72,46 @@ describe('Namecoin', function() {
     });
   });
 
+  describe('transaction import', function() {
+    var longTx = '0071000002d8ff1243ca678eb06c7c3accc73e48841e276f8c93f65944' +
+      '8fb718295934c304000000006a4730440220439e5fec08b2cda78c42180965e02db13' +
+      '8d7030b9d8b3d22825683c58a349fa402202356e7cd04c8a8e13c1fa393f1ea0f3ac9' +
+      '5129c9cc456b746e20805aaad3703b012102457bdf10258cfe3c93e3bfb3f94bac328' +
+      '62524240258f5b7255875929fc4fbd1feffffffd8ff1243ca678eb06c7c3accc73e48' +
+      '841e276f8c93f659448fb718295934c304010000006a47304402202e675a1dd358329' +
+      '7defbde6fd7812f0b1b6663a0050ca86a6e4562d71cdce61702206e8d74eb8631fa59' +
+      '6bbe0cb9db5431b377800d6e7002e1de2400f28f306c2306012103d29c7b830c03620' +
+      'cb466e7d15eaf6bb519ee882ec44074439d404792bed1f918feffffff023e4f9b9400' +
+      '0000001976a91488c3fed8e5b6141cf15b4355c4dea14d37924bb488ac40420f00000' +
+      '00000fd440252074d41584c454e4e1465480c3b779769533b52565af33ef8ddc68a84' +
+      'd74d08023030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '030303030303030303030303030303030303030303030303030303030303030303030' +
+      '303030303030303030303030303030303030303030303030303030303030303030303' +
+      '03130303030306d6d76a9146f00ab919932e137619535379092d34c50917cd588ac71' +
+      '010000';
+    it('should be able to import a raw transaction', function(){
+      var tx = new bitcore.Transaction(longTx);
+      expect(tx).to.exist();
+    });
+
+    it('should be able to stringify an imported raw transaction', function(){
+      var tx = new bitcore.Transaction(longTx);
+      expect(tx.toString()).to.equal(longTx);
+    });
+  });
+
   describe('namecoin core scripts compliance', function(){
     it('should be able to parse normal p2pk transactions', function(){
       var p2pkscript = new Script.buildPublicKeyHashOut(address).toString();
@@ -309,7 +349,7 @@ describe('Namecoin', function() {
         // hex -> binary. If our function did not convert the string rand
         // to hex, then an error would be thrown.
         expect(function(){
-          new bitcore.Transaction().nameNew(name, rand, address);
+          new bitcore.Transaction().nameNew(name, 'rand', address);
         }).to.not.throw();
       });
 
@@ -360,7 +400,6 @@ describe('Namecoin', function() {
         }).to.throw('Name too long.');
       });
     });
-
   });
 
   describe('transactions', function(){
@@ -463,6 +502,7 @@ describe('Namecoin', function() {
         var tx = nameNewTransaction();
         expect(referenceTx.inputs.length).to.equal(tx.inputs.length);
       });
+
     });
 
     describe('name_firstupdate namecoin core compliance', function(){
@@ -600,5 +640,56 @@ describe('Namecoin', function() {
       });
     });
 
+    describe('name_update after name_update namecoin core compliance', function(){
+      var utxos = [new bitcore.Transaction.UnspentOutput({
+        txId: 'ebeb0f4e4261982a5e5f3f3d743530d22bc7d1875cd5ac38d8f1f58751bc7494',
+        amount: 39.94416000,
+        outputIndex: 0,
+        script : '76a9144dc9a65e884431457db646b40b0965b2b47abed488ac',
+        // cRBzJvXxR7Rv7GYSvueHimHNwzZ84F9dPkwbvsC5YkQqiQmdbAgR
+        address:'mncFthoMALxsEVczNpbfcToikRGhewbdsk'
+      }), new bitcore.Transaction.UnspentOutput({
+        txId: 'ebeb0f4e4261982a5e5f3f3d743530d22bc7d1875cd5ac38d8f1f58751bc7494',
+        amount: 0.01000000,
+        outputIndex: 1,
+        script: '53055555555555065858585858316d7576a91423dd1ea1859e0bcf5b4c397c7e305764e5e0897588ac',
+        // cN333Fs8Th7ZpzedybQH8fDKE4yUzAKUbZPt7gkLL9SwicN2ugFw
+        address:'minaqRwfNgNEM37efBGR1k55MVS6hHCsVG'
+      })];
+
+      function nameUpdateTransaction() {
+        var tx =  new bitcore.Transaction()
+          .from(utxos)
+          .nameUpdate('UUUUU', 'XXXXX2', 'minaqRwfNgNEM37efBGR1k55MVS6hHCsVG')
+          .change('mkVNqbVqcYxi3zB2fRfiRQonf4JjwdAvnE')
+          .fee(constants.NETWORK_FEE.satoshis)
+          .sign([
+            'cRBzJvXxR7Rv7GYSvueHimHNwzZ84F9dPkwbvsC5YkQqiQmdbAgR',
+            'cN333Fs8Th7ZpzedybQH8fDKE4yUzAKUbZPt7gkLL9SwicN2ugFw'
+          ]);
+        return tx;
+      }
+
+      it('should set the correct version type on name output', function(){
+        var tx = nameUpdateTransaction();
+        expect(tx.version).to.equal(constants.NAMECOIN_TX_VERSION);
+      });
+
+      it('should serialize correctly', function(){
+        var tx = nameUpdateTransaction();
+        expect(tx.serialize()).to.be.a.string;
+      });
+
+      it('should have the same number of outputs as reference', function(){
+        var tx = nameUpdateTransaction();
+        expect(tx.outputs.length).to.equal(2);
+      });
+
+      it('should have the same number of inputs as reference', function(){
+        var tx = nameUpdateTransaction();
+        expect(tx.inputs.length).to.equal(2);
+      });
+    });
   });
+
 });

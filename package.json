@@ -1,6 +1,6 @@
 {
   "name": "bitcore-namecoin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Namecoin Support for Bitcore",
   "author": "Brandon Roberts <brandon@bxroberts.org>",
   "main": "index.js",

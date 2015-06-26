@@ -96,27 +96,6 @@ Script.prototype.isNameUpdate = function() {
   return this.chunks[0].opcodenum === Opcode.OP_NAME_UPDATE;
 };
 
-var patchFromNonP2SH = (function(){
-  var originalFn = Transaction.prototype._fromNonP2SH;
-  return function(utxo) {
-
-    if (utxo.script.isNameOut()) {
-      var clazz = NameInput;
-      return this.addInput(new clazz({
-        output: new Output({
-          script: utxo.script,
-          satoshis: utxo.satoshis
-        }),
-        prevTxId: utxo.txId,
-        outputIndex: utxo.outputIndex,
-        script: Script.empty()
-      }));
-    } else {
-      return originalFn(utxo);
-    }
-  };
-})();
-
 Transaction.prototype._fromNonP2SH = NameInput.patchFromNonP2SH; //patchFromNonP2SH;
 Transaction.Input.NameInput = require('./lib/nameinput.js');
 
